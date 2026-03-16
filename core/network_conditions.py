@@ -12,7 +12,7 @@ import threading
 from dataclasses import dataclass, field
 from typing import Optional
 
-from core.logging_config import setup_logger
+from .logging_config import setup_logger
 
 logger = setup_logger("core.network_sim")
 

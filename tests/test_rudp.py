@@ -16,10 +16,6 @@ import struct
 import threading
 import time
 import pytest
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from rudp.rudp_server import (
     RUDPServer,
     make_packet,
@@ -30,6 +26,7 @@ from rudp.rudp_server import (
     HEADER_SIZE,
 )
 from rudp.rudp_client import RUDPClient
+from core.network_conditions import NetworkConditionSimulator, NetworkProfile
 from tests.conftest import find_free_port
 
 
@@ -210,19 +207,15 @@ class TestNetworkConditions:
     """Test the network condition simulator."""
 
     def test_perfect_profile(self):
-        from core.network_conditions import NetworkConditionSimulator, NetworkProfile
-
         sim = NetworkConditionSimulator(NetworkProfile.perfect())
-        sent_count = 0
+        sent_count: int = 0
         for _ in range(100):
             result = sim.maybe_send(lambda data, **kw: None, b"test")
             if result:
-                sent_count += 1
+                sent_count = sent_count + 1
         assert sent_count == 100  # No drops
 
     def test_lossy_profile(self):
-        from core.network_conditions import NetworkConditionSimulator, NetworkProfile
-
         sim = NetworkConditionSimulator(NetworkProfile.lossy(0.5))
         sent = sum(
             1 for _ in range(200)
@@ -232,8 +225,6 @@ class TestNetworkConditions:
         assert 50 < sent < 175
 
     def test_invalid_loss_rate(self):
-        from core.network_conditions import NetworkProfile
-
         with pytest.raises(ValueError):
             NetworkProfile(loss_rate=1.5)
 

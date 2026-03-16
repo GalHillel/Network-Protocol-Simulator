@@ -14,10 +14,6 @@ import struct
 import threading
 import time
 import pytest
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from dns_srv.dns_server import DNSServer, DNSCache
 from tests.conftest import find_free_port, wait_for_port
 

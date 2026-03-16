@@ -12,14 +12,10 @@ import socket
 import threading
 import time
 import pytest  # type: ignore
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from rudp.rudp_server import RUDPServer, make_packet, parse_packet, FLAG_DATA, FLAG_ACK  # type: ignore
-from rudp.rudp_client import RUDPClient  # type: ignore
-from http_srv.tcp_server import TCPServer  # type: ignore
-from tests.conftest import find_free_port   # type: ignore
+from rudp.rudp_server import RUDPServer, make_packet, parse_packet, FLAG_DATA, FLAG_ACK
+from rudp.rudp_client import RUDPClient
+from http_srv.tcp_server import TCPServer
+from tests.conftest import find_free_port
 
 
 class TestRUDPStress:
@@ -44,7 +40,7 @@ class TestRUDPStress:
                     raw, _ = sock.recvfrom(1024)
                     seq, flags, _ = parse_packet(raw)
                     if flags == FLAG_ACK:
-                        acks_received += 1  # type: ignore
+                        acks_received = acks_received + 1
                 except socket.timeout:
                     pass
                 # Small delay to avoid overwhelming
@@ -112,7 +108,7 @@ class TestTCPStress:
                     sock.sendall(b"invalid://url,test")
                     resp = sock.recv(4096)
                     if resp:
-                        success_count += 1  # type: ignore
+                        success_count = success_count + 1
             except (ConnectionRefusedError, socket.timeout, OSError):
                 pass
             time.sleep(0.02)

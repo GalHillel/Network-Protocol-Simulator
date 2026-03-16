@@ -11,7 +11,7 @@ import threading
 import logging
 from typing import Optional
 
-from core.logging_config import setup_logger
+from .logging_config import setup_logger
 
 
 class BaseServer(abc.ABC):
@@ -49,6 +49,7 @@ class BaseServer(abc.ABC):
         self._thread = threading.Thread(
             target=self._run_wrapper, name=f"{self.name}-thread", daemon=daemon
         )
+        assert self._thread is not None
         self._thread.start()
         self.logger.info("%s started on %s:%d", self.name, self.host, self.port)
 
@@ -72,8 +73,9 @@ class BaseServer(abc.ABC):
         self.logger.info("Shutting down %s…", self.name)
         self._running.clear()
         self._cleanup()
-        if self._thread and self._thread.is_alive():
-            self._thread.join(timeout=timeout)
+        if self._thread:
+            if self._thread.is_alive():
+                self._thread.join(timeout=timeout)
         self.logger.info("%s stopped.", self.name)
 
     @abc.abstractmethod

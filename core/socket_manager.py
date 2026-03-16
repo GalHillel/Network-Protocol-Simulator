@@ -9,7 +9,7 @@ import socket as _socket
 import logging
 from typing import Optional, Tuple
 
-from core.logging_config import setup_logger
+from .logging_config import setup_logger
 
 logger = setup_logger("core.socket")
 

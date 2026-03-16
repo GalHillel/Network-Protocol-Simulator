@@ -12,10 +12,6 @@ import socket
 import threading
 import time
 import pytest
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from http_srv.tcp_server import TCPServer
 from tests.conftest import find_free_port
 

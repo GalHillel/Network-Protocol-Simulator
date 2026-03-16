@@ -16,6 +16,7 @@ if _PROJECT_ROOT not in sys.path:
 
 import dns.message
 import dns.query
+import struct
 from core.logging_config import setup_logger
 
 logger = setup_logger("examples.dhcp_dns")
@@ -47,7 +48,7 @@ def run_dhcp_discover() -> None:
         packet[0] = 0x01 # REQUEST
         packet[1] = 0x01 # Ethernet
         packet[2] = 0x06 # HLEN
-        packet[4:8] = xid
+        struct.pack_into("!4s", packet, 4, xid)
         
         # Magic cookie + Option 53 (Discover) + End
         packet += b"\x63\x82\x53\x63" + b"\x35\x01\x01" + b"\xff"
@@ -59,8 +60,9 @@ def run_dhcp_discover() -> None:
             data, addr = sock.recvfrom(1024)
             logger.info("Received response from %s", addr)
             # Check for OFFER (Option 53 = 2)
+            # Check for OFFER (Option 53 = 2)
             if b"\x35\x01\x02" in data:
-                assigned_ip = socket.inet_ntoa(data[16:20])
+                assigned_ip = socket.inet_ntoa(struct.unpack_from("!4s", data, 16)[0])
                 logger.info("DHCP SUCCESS: Offered IP %s", assigned_ip)
             else:
                 logger.warning("Received DHCP response, but not an OFFER.")

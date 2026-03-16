@@ -14,10 +14,6 @@ import struct
 import threading
 import time
 import pytest
-import sys
-import os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from dhcp.dhcp_server import DHCPServer, IPPool, DHCP_MAGIC_COOKIE, DHCP_DISCOVER, DHCP_REQUEST
 from tests.conftest import find_free_port
 
